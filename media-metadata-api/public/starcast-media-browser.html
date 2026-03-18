@@ -1605,10 +1605,6 @@ uploadSubmitBtn.addEventListener('click', async () => {
       const title = item.file.name.replace(/\.[^.]+$/, '');
       fd.append('title', title);
 
-      // mediaType from MIME
-      const mediaType = item.file.type.startsWith('audio') ? 'AUDIO' : 'IMAGE';
-      fd.append('mediaType', mediaType);
-
       // optional metadata as JSON
       const meta = {};
       if (artist)  meta.artist  = artist;
@@ -1617,12 +1613,15 @@ uploadSubmitBtn.addEventListener('click', async () => {
       if (concept) meta.concept = concept;
       if (Object.keys(meta).length) fd.append('metadata', JSON.stringify(meta));
 
-      if (tags.length) fd.append('tags', JSON.stringify(tags));
+      if (tags.length) fd.append('tags', tags.join(','));
 
       const res = await fetch(`${API}/api/media`, { method: 'POST', body: fd });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || err.message || `HTTP ${res.status}`);
+        const detail = err.details
+          ? err.details.map(d => `${d.field}: ${d.message}`).join(', ')
+          : (err.error || err.message || `HTTP ${res.status}`);
+        throw new Error(detail);
       }
 
       item.status = 'done';

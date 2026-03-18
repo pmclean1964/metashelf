@@ -14,6 +14,11 @@ function errorHandler(err, req, res, next) {
   if (err instanceof AppError) {
     if (err.statusCode >= 500) {
       logger.error(err.message, { stack: err.stack, path: req.path });
+    } else {
+      logger.warn(`${req.method} ${req.path} -> ${err.statusCode}: ${err.message}`, {
+        ...(err.details ? { details: err.details } : {}),
+        body: req.body,
+      });
     }
     return res.status(err.statusCode).json({
       error: err.message,

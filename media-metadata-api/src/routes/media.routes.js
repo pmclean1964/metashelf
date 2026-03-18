@@ -7,6 +7,7 @@ const router = express.Router();
 const controller = require('../controllers/media.controller');
 const { upload } = require('../middleware/upload');
 const { validate } = require('../middleware/validate');
+const logger = require('../config/logger');
 const {
   uploadBodySchema,
   updateBodySchema,
@@ -68,6 +69,13 @@ const {
 router.post(
   '/',
   upload.single('file'),
+  (req, res, next) => {
+    logger.debug('POST /api/media - parsed body', {
+      body: req.body,
+      file: req.file ? { originalname: req.file.originalname, mimetype: req.file.mimetype, size: req.file.size } : null,
+    });
+    next();
+  },
   validate(uploadBodySchema, 'body'),
   controller.upload
 );

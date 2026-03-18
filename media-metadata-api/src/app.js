@@ -119,9 +119,11 @@ function createApp() {
   );
 
   // ── Static assets ──────────────────────────────────────────────────────────
+  app.use('/browser', express.static(path.join(__dirname, '../public')));
+  app.get('/browser', (req, res) => res.sendFile(path.join(__dirname, '../public/starcast-media-browser.html')));
   app.use('/logo.png', express.static(path.join(__dirname, '../uploads/logo.png')));
-  app.use('/browser', express.static(path.join(__dirname, '../uploads')));
-  app.get('/browser', (req, res) => res.sendFile(path.join(__dirname, '../uploads/starcast-media-browser.html')));
+  //app.use('/browser', express.static(path.join(__dirname, '../uploads')));
+  //app.get('/browser', (req, res) => res.sendFile(path.join(__dirname, '../uploads/starcast-media-browser.html')));
 
   // ── Routes ─────────────────────────────────────────────────────────────────
   app.use('/health', healthRoutes);

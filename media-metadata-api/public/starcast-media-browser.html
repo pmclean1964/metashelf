@@ -201,8 +201,9 @@
     color: white;
   }
 
-  .filter-btn.active-audio { background: var(--blue); border-color: var(--blue); color: white; }
+  .filter-btn.active-audio { background: var(--blue);   border-color: var(--blue);   color: white; }
   .filter-btn.active-image { background: var(--purple); border-color: var(--purple); color: white; }
+  .filter-btn.active-bad   { background: var(--gold);   border-color: var(--gold);   color: #000; }
 
   /* ── FAMILY FILTERS ── */
   .family-row {
@@ -1156,6 +1157,7 @@
     <button class="filter-btn active" data-type="all">All</button>
     <button class="filter-btn" data-type="AUDIO">Audio</button>
     <button class="filter-btn" data-type="IMAGE">Art</button>
+    <button class="filter-btn" data-type="BAD">⚑ Bad</button>
     <span class="filter-label" style="margin-left:1rem">Sort</span>
     <button class="filter-btn active" data-sort="createdAt-desc">Newest</button>
     <button class="filter-btn" data-sort="createdAt-asc">Oldest</button>
@@ -1446,7 +1448,7 @@ async function fetchMedia() {
   });
 
   if (state.search)         params.set('search', state.search);
-  if (state.type !== 'all') params.set('mediaType', state.type);
+  if (state.type !== 'all' && state.type !== 'BAD') params.set('mediaType', state.type);
   if (state.family)         params.set('metadata.family', state.family);
 
   const res  = await fetch(`${API}/api/media?${params}`);
@@ -1488,7 +1490,12 @@ async function render() {
   renderFamilyFilters();
 
   // Filter out auto-generated linked art (cover images embedded in audio tracks)
-  const visible = records.filter(r => !r.metadata?.linked_art && !r.metadata?.bad_track);
+  const showingBad = state.type === 'BAD';
+  const visible = records.filter(r => {
+    if (r.metadata?.linked_art) return false;
+    if (showingBad) return !!r.metadata?.bad_track;
+    return !r.metadata?.bad_track;
+  });
 
   if (!visible.length) {
     grid.innerHTML = `<div class="state-msg"><span class="big">◌</span>No records found</div>`;
@@ -1822,7 +1829,7 @@ function filterByTag(tag) {
 // ── TYPE FILTER BUTTONS ───────────────────────────────────
 document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active','active-audio','active-image'));
+    document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active','active-audio','active-image','active-bad'));
     const t = btn.dataset.type;
     if (t === 'all') {
       btn.classList.add('active');
@@ -1830,6 +1837,8 @@ document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
       btn.classList.add('active', 'active-audio');
     } else if (t === 'IMAGE') {
       btn.classList.add('active', 'active-image');
+    } else if (t === 'BAD') {
+      btn.classList.add('active', 'active-bad');
     }
     state.type = t;
     state.page = 1;

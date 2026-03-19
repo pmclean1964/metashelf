@@ -432,6 +432,94 @@
   .action-btn.view:hover  { border-color: var(--purple); color: var(--purple); }
   .action-btn.lyrics:hover{ border-color: var(--green); color: var(--green); }
   .action-btn.del:hover   { border-color: var(--accent); color: var(--accent); }
+  .action-btn.bad         { border-color: var(--gold); color: var(--gold); background: rgba(240,192,61,0.06); }
+  .action-btn.bad:hover   { background: rgba(240,192,61,0.15); }
+  .action-btn.bad.flagged { background: rgba(240,192,61,0.18); box-shadow: 0 0 6px rgba(240,192,61,0.3); }
+
+  /* ── BAD REPORT MODAL ── */
+  .report-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(8,10,15,0.88);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none; place-items: center; padding: 2rem;
+  }
+  .report-modal-overlay.open { display: grid; }
+  .report-modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    width: 100%; max-width: 780px;
+    max-height: 85vh; overflow-y: auto;
+    animation: modalIn 0.2s ease;
+  }
+  .report-toolbar {
+    display: flex; gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap; align-items: center;
+  }
+  .report-summary {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.8rem; padding: 0 1.5rem 1rem;
+  }
+  .report-summary-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.7rem 0.9rem;
+  }
+  .report-summary-label {
+    font-size: 0.58rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    font-family: var(--font-mono); margin-bottom: 0.5rem;
+  }
+  .report-summary-items { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .report-chip {
+    font-size: 0.65rem; font-family: var(--font-mono);
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 0.15rem 0.4rem;
+    color: var(--text);
+  }
+  .report-chip .report-chip-count {
+    color: var(--gold); font-weight: 700; margin-left: 0.3rem;
+  }
+  .report-table-wrap {
+    padding: 0 1.5rem 1.5rem;
+    overflow-x: auto;
+  }
+  .report-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.7rem; font-family: var(--font-mono);
+  }
+  .report-table th {
+    text-align: left; padding: 0.4rem 0.6rem;
+    color: var(--muted); font-size: 0.6rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-table td {
+    padding: 0.45rem 0.6rem; color: var(--text);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top; max-width: 180px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .report-table tr:hover td { background: var(--surface2); }
+  .report-export-btn {
+    background: var(--green); border: 1px solid var(--green);
+    border-radius: 6px; padding: 0.4rem 1rem;
+    font-size: 0.72rem; font-family: var(--font-head);
+    font-weight: 700; color: white; cursor: pointer;
+    transition: all 0.15s; margin-left: auto;
+  }
+  .report-export-btn:hover { background: #25b872; }
+  .bad-report-btn {
+    background: var(--surface2); border: 1px solid var(--gold);
+    border-radius: 20px; padding: 0.3rem 0.9rem;
+    font-size: 0.72rem; font-family: var(--font-head);
+    font-weight: 700; color: var(--gold); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .bad-report-btn:hover { background: rgba(240,192,61,0.12); }
 
   /* ── AUDIO PLAYER ── */
   .card-player {
@@ -1055,6 +1143,7 @@
     <div class="stat-pill" id="audioStat">— audio</div>
     <div class="stat-pill" id="imageStat">— art</div>
     <button class="upload-trigger-btn" id="openUploadBtn">⬆ Upload</button>
+    <button class="upload-trigger-btn" id="badReportBtn" style="background:var(--gold);border-color:var(--gold)">⚑ Bad Report</button>
   </div>
 </header>
 
@@ -1260,6 +1349,44 @@
   </div>
 </div>
 
+<!-- BAD REPORT MODAL -->
+<div class="report-modal-overlay" id="reportOverlay">
+  <div class="report-modal" id="reportModal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">⚑ Bad Track Report</div>
+        <div class="modal-artist" id="reportSubtitle">Loading...</div>
+      </div>
+      <button class="modal-close" id="reportClose">✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.2rem 1.5rem 0.5rem">
+      <div class="report-summary" id="reportSummary"></div>
+    </div>
+    <div class="report-table-wrap">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Slot</th>
+            <th>Family</th>
+            <th>Genre</th>
+            <th>Mood</th>
+            <th>Instrumental</th>
+            <th>Duration</th>
+            <th>Size KB</th>
+            <th>Flagged</th>
+          </tr>
+        </thead>
+        <tbody id="reportTableBody"></tbody>
+      </table>
+    </div>
+    <div class="report-toolbar">
+      <span style="font-size:0.7rem;font-family:var(--font-mono);color:var(--muted)" id="reportCount"></span>
+      <button class="report-export-btn" id="reportExportBtn">⬇ Export JSON</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
@@ -1361,7 +1488,7 @@ async function render() {
   renderFamilyFilters();
 
   // Filter out auto-generated linked art (cover images embedded in audio tracks)
-  const visible = records.filter(r => !r.metadata?.linked_art);
+  const visible = records.filter(r => !r.metadata?.linked_art && !r.metadata?.bad_track);
 
   if (!visible.length) {
     grid.innerHTML = `<div class="state-msg"><span class="big">◌</span>No records found</div>`;
@@ -1443,6 +1570,8 @@ function buildCard(r, i) {
   const viewBtn   = isImage ? `<a class="action-btn view" href="${API}/api/media/${r.id}/file" target="_blank">↗ View</a>` : '';
   const lyricsBtn = m.lyrics ? `<button class="action-btn lyrics" onclick="openModal(event,'${r.id}')">♪ Lyrics</button>` : '';
   const detailBtn  = `<button class="action-btn" onclick="openModal(event,'${r.id}')">≡ Detail</button>`;
+  const isBad     = !!m.bad_track;
+  const badBtn    = `<button class="action-btn bad${isBad?' flagged':''}" onclick="flagBadTrack(event,'${r.id}',this)" title="${isBad?'Unflag bad track':'Flag as bad track'}">⚑ ${isBad?'Flagged':'Bad'}</button>`;
   const deleteBtn  = `<button class="action-btn del" onclick="deleteRecord(event,'${r.id}','${artId||''}',this)">⌫ Delete</button>`;
 
   card.innerHTML = `
@@ -1460,7 +1589,7 @@ function buildCard(r, i) {
       <div id="player-${r.id}" class="card-player"></div>
       <div class="card-footer">
         <span class="card-date">${date}</span>
-        <div class="card-actions">${playBtn}${viewBtn}${lyricsBtn}${detailBtn}${deleteBtn}</div>
+        <div class="card-actions">${playBtn}${viewBtn}${lyricsBtn}${detailBtn}${badBtn}${deleteBtn}</div>
       </div>
     </div>
   `;
@@ -2240,6 +2369,8 @@ function buildListRow(r, i) {
   const playBtn   = isAudio ? `<button class="action-btn play" onclick="togglePlayer(event,'${r.id}')">▶</button>` : '';
   const viewBtn   = isImage ? `<a class="action-btn view" href="${API}/api/media/${r.id}/file" target="_blank">↗</a>` : '';
   const detailBtn = `<button class="action-btn" onclick="openModal(event,'${r.id}')">≡</button>`;
+  const isBad2    = !!m.bad_track;
+  const badBtn2   = `<button class="action-btn bad${isBad2?' flagged':''}" onclick="flagBadTrack(event,'${r.id}',this)" title="${isBad2?'Unflag':'Flag as bad'}">⚑</button>`;
   const deleteBtn = `<button class="action-btn del" onclick="deleteRecord(event,'${r.id}','${artId}',this)">⌫</button>`;
 
   const row = document.createElement('div');
@@ -2258,12 +2389,211 @@ function buildListRow(r, i) {
     <div class="list-family">${fmeta.emoji||''} ${fmeta.label || family}</div>
     <div class="list-dur">${dur}</div>
     <div class="list-date">${date}</div>
-    <div class="list-actions">${playBtn}${viewBtn}${detailBtn}${deleteBtn}</div>
+    <div class="list-actions">${playBtn}${viewBtn}${detailBtn}${badBtn2}${deleteBtn}</div>
     <div id="player-${r.id}" class="card-player" style="grid-column:1/-1;margin:0"></div>
   `;
 
   return row;
 }
+
+// ── FLAG BAD TRACK ───────────────────────────────────────
+async function flagBadTrack(e, id, btn) {
+  e.stopPropagation();
+  const isAlreadyFlagged = btn.classList.contains('flagged');
+  const bad_track        = !isAlreadyFlagged;
+
+  btn.disabled = true;
+  const origText = btn.textContent;
+  btn.textContent = '…';
+
+  try {
+    const rec = await fetch(`${API}/api/media/${id}`).then(r => r.json());
+    const m   = rec.metadata || {};
+
+    const res = await fetch(`${API}/api/media/${id}`, {
+      method:  'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        metadata: {
+          bad_track,
+          bad_track_at: bad_track ? new Date().toISOString() : null
+        }
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (bad_track) {
+      btn.classList.add('flagged');
+      btn.textContent = btn.textContent.length > 1 ? '⚑ Flagged' : '⚑';
+      // Fade out the card/row
+      const card = btn.closest('.card') || btn.closest('.list-row');
+      if (card) {
+        card.style.transition   = 'opacity 0.4s';
+        card.style.opacity      = '0.2';
+        card.style.pointerEvents = 'none';
+        setTimeout(() => card.style.display = 'none', 400);
+      }
+    } else {
+      btn.classList.remove('flagged');
+      btn.textContent = btn.textContent.length > 1 ? '⚑ Bad' : '⚑';
+      const card = btn.closest('.card') || btn.closest('.list-row');
+      if (card) {
+        card.style.opacity = '1';
+        card.style.pointerEvents = '';
+        card.style.display = '';
+      }
+    }
+  } catch(err) {
+    btn.textContent = origText;
+    alert('Flag failed: ' + err.message);
+  }
+  btn.disabled = false;
+}
+
+// ── BAD REPORT ────────────────────────────────────────────
+let badReportData = [];
+
+document.getElementById('openBadReportBtn').addEventListener('click', openBadReport);
+document.getElementById('reportClose').addEventListener('click', () => {
+  document.getElementById('reportOverlay').classList.remove('open');
+});
+document.getElementById('reportOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('reportOverlay'))
+    document.getElementById('reportOverlay').classList.remove('open');
+});
+
+async function openBadReport() {
+  document.getElementById('reportOverlay').classList.add('open');
+  document.getElementById('reportSubtitle').textContent = 'Fetching flagged tracks…';
+  document.getElementById('reportTableBody').innerHTML  = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--muted)"><div class="spinner"></div></td></tr>';
+  document.getElementById('reportSummary').innerHTML    = '';
+  document.getElementById('reportCount').textContent    = '';
+
+  try {
+    // Fetch all bad tracks — page through if needed
+    let page = 1; const pageSize = 100; let all = [];
+    while (true) {
+      const res  = await fetch(`${API}/api/media?pageSize=${pageSize}&page=${page}`);
+      const data = await res.json();
+      const bad  = (data.data || []).filter(r => r.metadata?.bad_track);
+      all = all.concat(bad);
+      if (data.pagination.page >= data.pagination.totalPages) break;
+      page++;
+    }
+
+    badReportData = all;
+    renderBadReport(all);
+  } catch(err) {
+    document.getElementById('reportSubtitle').textContent = 'Error: ' + err.message;
+    document.getElementById('reportTableBody').innerHTML = '';
+  }
+}
+
+function renderBadReport(tracks) {
+  document.getElementById('reportSubtitle').textContent =
+    `${tracks.length} flagged track${tracks.length !== 1 ? 's' : ''} — patterns below`;
+  document.getElementById('reportCount').textContent =
+    `${tracks.length} record${tracks.length !== 1 ? 's' : ''}`;
+
+  // ── Summary analysis ──
+  function tally(arr, key) {
+    const map = {};
+    arr.forEach(r => {
+      const v = r.metadata?.[key] || 'unknown';
+      map[v] = (map[v] || 0) + 1;
+    });
+    return Object.entries(map).sort((a,b) => b[1]-a[1]);
+  }
+
+  const sections = [
+    { label: 'By Family',       data: tally(tracks, 'family') },
+    { label: 'By Genre',        data: tally(tracks, 'genre') },
+    { label: 'By Mood',         data: tally(tracks, 'mood') },
+    { label: 'By Slot',         data: tally(tracks, 'slot_id') },
+  ];
+
+  document.getElementById('reportSummary').innerHTML = sections.map(s => `
+    <div class="report-summary-card">
+      <div class="report-summary-label">${s.label}</div>
+      <div class="report-summary-items">
+        ${s.data.length ? s.data.map(([k,v]) =>
+          `<span class="report-chip">${k}<span class="report-chip-count">×${v}</span></span>`
+        ).join('') : '<span style="color:var(--muted);font-size:0.65rem;font-family:var(--font-mono)">none</span>'}
+      </div>
+    </div>
+  `).join('');
+
+  // ── Table ──
+  document.getElementById('reportTableBody').innerHTML = tracks.length
+    ? tracks.map(r => {
+        const m    = r.metadata || {};
+        const date = m.bad_track_at ? new Date(m.bad_track_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+        const dur  = r.durationSeconds ? formatDuration(r.durationSeconds) : '—';
+        const kb   = r.sizeBytes ? Math.round(r.sizeBytes/1024) : '—';
+        return `<tr>
+          <td title="${r.title||''}">${r.title || 'Untitled'}</td>
+          <td>${m.slot_id || '—'}</td>
+          <td>${m.family  || '—'}</td>
+          <td>${m.genre || (Array.isArray(m.styles) ? m.styles[0] : m.styles) || '—'}</td>
+          <td>${m.mood    || '—'}</td>
+          <td>${m.instrumental !== undefined ? (m.instrumental ? 'Yes' : 'No') : '—'}</td>
+          <td>${dur}</td>
+          <td style="${kb !== '—' && kb < 500 ? 'color:var(--accent);font-weight:700' : ''}">${kb}</td>
+          <td style="color:var(--muted);font-size:0.62rem">${date}</td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);font-family:var(--font-mono)">No bad tracks flagged yet</td></tr>';
+}
+
+document.getElementById('reportExportBtn').addEventListener('click', () => {
+  if (!badReportData.length) return;
+
+  // Build rich export with pattern analysis
+  function tally(arr, key) {
+    const map = {};
+    arr.forEach(r => { const v = r.metadata?.[key]||'unknown'; map[v]=(map[v]||0)+1; });
+    return Object.entries(map).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({value:k,count:v}));
+  }
+
+  const export_data = {
+    generated_at:   new Date().toISOString(),
+    total_flagged:  badReportData.length,
+    patterns: {
+      by_family:      tally(badReportData, 'family'),
+      by_genre:       tally(badReportData, 'genre'),
+      by_mood:        tally(badReportData, 'mood'),
+      by_slot:        tally(badReportData, 'slot_id'),
+      by_instrumental:tally(badReportData, 'instrumental'),
+    },
+    tracks: badReportData.map(r => ({
+      id:           r.id,
+      title:        r.title,
+      flagged_at:   r.metadata?.bad_track_at,
+      slot:         r.metadata?.slot_id,
+      family:       r.metadata?.family,
+      genre:        r.metadata?.genre || r.metadata?.styles,
+      mood:         r.metadata?.mood,
+      scene:        r.metadata?.scene,
+      topic:        r.metadata?.topic,
+      instrumental: r.metadata?.instrumental,
+      gender:       r.metadata?.gender,
+      style_string: r.metadata?.style_string,
+      duration_s:   r.durationSeconds,
+      size_kb:      r.sizeBytes ? Math.round(r.sizeBytes/1024) : null,
+      ollama_model: r.metadata?.ollama_model,
+      cfg_scale:    r.metadata?.cfg_scale,
+      temperature:  r.metadata?.temperature,
+    }))
+  };
+
+  const blob = new Blob([JSON.stringify(export_data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `bad-tracks-report-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
 
 // ── DELETE ────────────────────────────────────────────────
 async function deleteRecord(e, id, artId, btn) {
@@ -2305,6 +2635,103 @@ async function deleteRecord(e, id, artId, btn) {
     alert('Delete failed: ' + err.message);
   }
 }
+
+// ── BAD TRACK REPORT ─────────────────────────────────────
+document.getElementById('badReportBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('badReportBtn');
+  btn.textContent = '⚑ Fetching…';
+  btn.disabled = true;
+
+  try {
+    // Fetch all bad tracks — page through if needed
+    let page = 1;
+    let allBad = [];
+    while (true) {
+      const res  = await fetch(`${API}/api/media?pageSize=100&page=${page}&sortBy=createdAt&sortOrder=desc`);
+      const data = await res.json();
+      const records = data.data || [];
+      const bad = records.filter(r => r.metadata?.bad_track === true);
+      allBad = allBad.concat(bad);
+      if (page >= (data.pagination?.totalPages || 1)) break;
+      page++;
+    }
+
+    if (!allBad.length) {
+      alert('No bad tracks flagged yet.');
+      btn.textContent = '⚑ Bad Report';
+      btn.disabled = false;
+      return;
+    }
+
+    // Build report
+    const report = {
+      generated_at:   new Date().toISOString(),
+      total_bad:      allBad.length,
+      summary: {
+        by_family:  {},
+        by_slot:    {},
+        by_genre:   {},
+        by_mood:    {},
+        short_tracks: 0,   // < 1MB — likely corrupt
+        instrumental: 0,
+        vocal:        0,
+      },
+      tracks: allBad.map(r => {
+        const m = r.metadata || {};
+        return {
+          id:           r.id,
+          title:        r.title,
+          flagged_at:   m.bad_track_at,
+          slot:         m.slot_id        || null,
+          family:       m.family         || null,
+          style_string: m.style_string   || null,
+          styles:       m.styles         || null,
+          genre:        m.genre          || null,
+          mood:         m.mood           || null,
+          scene:        m.scene          || null,
+          instrumental: m.instrumental   ?? null,
+          gender:       m.gender         || null,
+          cfg_scale:    m.cfg_scale      || null,
+          temperature:  m.temperature    || null,
+          duration_s:   r.durationSeconds|| null,
+          size_kb:      r.sizeBytes ? Math.round(r.sizeBytes / 1024) : null,
+          artist:       m.artist         || null,
+          source:       m.source         || null,
+          ollama_model: m.ollama_model   || null,
+        };
+      })
+    };
+
+    // Build summary counts
+    report.tracks.forEach(t => {
+      if (t.family) report.summary.by_family[t.family] = (report.summary.by_family[t.family] || 0) + 1;
+      if (t.slot)   report.summary.by_slot[t.slot]     = (report.summary.by_slot[t.slot]     || 0) + 1;
+      if (t.genre)  report.summary.by_genre[t.genre]   = (report.summary.by_genre[t.genre]   || 0) + 1;
+      if (t.mood)   report.summary.by_mood[t.mood]     = (report.summary.by_mood[t.mood]     || 0) + 1;
+      if (t.size_kb && t.size_kb < 1000) report.summary.short_tracks++;
+      if (t.instrumental === true)  report.summary.instrumental++;
+      if (t.instrumental === false) report.summary.vocal++;
+    });
+
+    // Download as JSON file
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `bad-track-report-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    btn.textContent = `⚑ ${allBad.length} exported`;
+    setTimeout(() => { btn.textContent = '⚑ Bad Report'; }, 3000);
+
+  } catch (err) {
+    alert('Report failed: ' + err.message);
+    btn.textContent = '⚑ Bad Report';
+  }
+
+  btn.disabled = false;
+});
 
 // ── INIT ──────────────────────────────────────────────────
 fetchStats();

@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
+    color-scheme: dark;
     --bg:        #080a0f;
     --surface:   #0e1118;
     --surface2:  #151a24;
@@ -1037,7 +1038,8 @@
     -webkit-appearance: none;
   }
   .page-size-select:hover,
-  .page-size-select:focus { border-color: var(--border2); }
+  .page-size-select:focus { border-color: var(--accent); }
+  .page-size-select option { background: var(--surface2); color: var(--text); }
 
   /* ── LIST VIEW ── */
   .grid.list-view {
@@ -2792,6 +2794,7 @@ document.getElementById('badReportBtn').addEventListener('click', async () => {
 });
 
 // ── INIT ──────────────────────────────────────────────────
+renderFamilyFilters();
 fetchStats();
 render();
 

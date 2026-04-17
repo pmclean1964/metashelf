@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//e/starcast/**)",
+      "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && cat \"{}\"')",
+      "Bash(find E:\\\\starcast\\\\agents *)"
+    ]
+  }
+}

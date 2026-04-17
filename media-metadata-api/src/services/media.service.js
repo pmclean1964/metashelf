@@ -45,6 +45,13 @@ async function createMedia(file, body) {
     }
   }
 
+  // Fold agent classification fields into metadata so they are queryable
+  // via metadata.contentType, metadata.stationId, etc.
+  if (body.contentType) metadata.contentType = metadata.contentType ?? body.contentType;
+  if (body.stationId)   metadata.stationId   = metadata.stationId   ?? body.stationId;
+  if (body.generatedBy) metadata.generatedBy = metadata.generatedBy ?? body.generatedBy;
+  if (body.runId)       metadata.runId       = metadata.runId       ?? body.runId;
+
   const storagePath = path.relative(process.cwd(), file.path);
 
   const record = await repo.create({

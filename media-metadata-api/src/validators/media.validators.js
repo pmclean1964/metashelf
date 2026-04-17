@@ -17,6 +17,11 @@ const uploadBodySchema = Joi.object({
   width: Joi.number().integer().positive().optional().allow(null),
   height: Joi.number().integer().positive().optional().allow(null),
   createdBy: Joi.string().trim().max(255).optional().allow('', null),
+  // Agent-supplied classification fields — folded into metadata on create
+  contentType: Joi.string().trim().max(100).optional().allow('', null),
+  stationId:   Joi.string().trim().max(100).optional().allow('', null),
+  generatedBy: Joi.string().trim().max(100).optional().allow('', null),
+  runId:       Joi.string().trim().max(100).optional().allow('', null),
   // metadata can be a JSON string (from form-data) or an object
   metadata: Joi.alternatives()
     .try(Joi.object(), Joi.string())
@@ -45,6 +50,11 @@ const listQuerySchema = Joi.object({
   createdBy: Joi.string().trim().optional(),
   mimeType: Joi.string().trim().optional(),
   checksum: Joi.string().trim().optional(),
+  // Agent classification shorthands (map to metadata sub-keys in repository)
+  contentType: Joi.string().trim().optional(),
+  stationId:   Joi.string().trim().optional(),
+  generatedBy: Joi.string().trim().optional(),
+  runId:       Joi.string().trim().optional(),
   sortBy: Joi.string()
     .valid('createdAt', 'updatedAt', 'title', 'sizeBytes')
     .default('createdAt'),

@@ -16,29 +16,26 @@ function buildMetadataFilters(query) {
     if (!key.startsWith('metadata.')) continue;
     const jsonKey = key.slice('metadata.'.length); // e.g. "family"
 
+    // Boolean strings → exact equals on the JSON boolean value
+    if (value === 'true') {
+      conditions.push({ metadata: { path: [jsonKey], equals: true } });
+      continue;
+    }
+    if (value === 'false') {
+      conditions.push({ metadata: { path: [jsonKey], equals: false } });
+      continue;
+    }
+
     // Cast to number when possible so numeric comparisons work
     const parsed = Number(value);
     const isNumeric = !isNaN(parsed) && value !== '';
 
     if (isNumeric) {
-      // Numeric: use exact equals
-      conditions.push({
-        metadata: {
-          path: [jsonKey],
-          equals: parsed,
-        },
-      });
+      conditions.push({ metadata: { path: [jsonKey], equals: parsed } });
     } else {
       // String: use string_contains so that minor casing or encoding
-      // differences (e.g. "Space_Weather" vs "space_weather") don't
-      // cause a miss. Family values are unique enough that a substring
-      // match is safe.
-      conditions.push({
-        metadata: {
-          path: [jsonKey],
-          string_contains: value,
-        },
-      });
+      // differences don't cause a miss.
+      conditions.push({ metadata: { path: [jsonKey], string_contains: value } });
     }
   }
   return conditions;
@@ -55,6 +52,11 @@ function buildWhereClause(query) {
     createdBy,
     mimeType,
     checksum,
+    // Agent classification shorthands — mapped to metadata sub-keys below
+    contentType,
+    stationId,
+    generatedBy,
+    runId,
     ...rest
   } = query;
 
@@ -74,6 +76,12 @@ function buildWhereClause(query) {
   if (createdBy) and.push({ createdBy });
   if (mimeType) and.push({ mimeType: { contains: mimeType, mode: 'insensitive' } });
   if (checksum) and.push({ checksum });
+
+  // Agent shorthand filters: map to their metadata equivalents
+  if (contentType) and.push({ metadata: { path: ['contentType'], string_contains: contentType } });
+  if (stationId)   and.push({ metadata: { path: ['stationId'],   string_contains: stationId } });
+  if (generatedBy) and.push({ metadata: { path: ['generatedBy'], string_contains: generatedBy } });
+  if (runId)       and.push({ metadata: { path: ['runId'],       equals: runId } });
 
   if (tags) {
     const tagArray = tags.split(',').map((t) => t.trim()).filter(Boolean);

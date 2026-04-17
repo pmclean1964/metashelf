@@ -197,4 +197,10 @@ async function remove(req, res) {
   return res.json(result);
 }
 
-module.exports = { upload, list, getById, streamFile, update, remove };
+// ── DELETE /api/media ─────────────────────────────────────────────────────────
+async function removeAll(req, res) {
+  const result = await service.deleteAllMedia();
+  return res.json(result);
+}
+
+module.exports = { upload, list, getById, streamFile, update, remove, removeAll };

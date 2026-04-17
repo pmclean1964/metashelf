@@ -1021,6 +1021,68 @@
   .bulk-delete-btn:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
   .bulk-delete-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
+  /* ── PURGE BUTTON ── */
+  .purge-btn {
+    background: transparent;
+    border: 1px solid #5c1a1a;
+    border-radius: 6px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.72rem;
+    font-family: var(--font-head);
+    color: #7a2a2a;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .purge-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,69,69,0.07); }
+
+  /* ── PURGE MODAL ── */
+  .purge-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .purge-overlay.open { display: flex; }
+  .purge-dialog {
+    background: var(--surface);
+    border: 1px solid #5c1a1a;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 360px;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .purge-dialog h3 {
+    font-size: 1rem; color: var(--accent); font-family: var(--font-head);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .purge-dialog p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+  .purge-dialog input {
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 6px; padding: 0.5rem 0.75rem;
+    color: var(--text); font-family: var(--font-mono); font-size: 0.8rem;
+    width: 100%; outline: none;
+  }
+  .purge-dialog input:focus { border-color: var(--accent); }
+  .purge-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+  .purge-cancel-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.4rem 1rem;
+    font-size: 0.75rem; font-family: var(--font-head);
+    color: var(--muted); cursor: pointer;
+  }
+  .purge-cancel-btn:hover { border-color: var(--border2); color: var(--text); }
+  .purge-confirm-btn {
+    background: var(--accent); border: none;
+    border-radius: 6px; padding: 0.4rem 1rem;
+    font-size: 0.75rem; font-family: var(--font-head);
+    color: #fff; cursor: pointer; transition: opacity 0.15s;
+  }
+  .purge-confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .purge-confirm-btn:not(:disabled):hover { opacity: 0.85; }
+
   /* ── PAGE SIZE SELECTOR ── */
   .page-size-wrap {
     display: flex;
@@ -1251,6 +1313,7 @@
       <span class="bulk-count" id="bulkCount">0 selected</span>
       <button class="bulk-delete-btn" id="bulkDeleteBtn" disabled>⌫ Delete selected</button>
     </div>
+    <button class="purge-btn" id="purgeBtn" title="Delete all records">⚠ Purge all</button>
   </div>
 
   <!-- GRID / LIST -->
@@ -1260,6 +1323,20 @@
 
   <!-- PAGINATION -->
   <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- PURGE MODAL -->
+<div class="purge-overlay" id="purgeOverlay">
+  <div class="purge-dialog">
+    <h3>⚠ Purge all media</h3>
+    <p>This will permanently delete <strong>every record and file</strong> in the store. There is no undo.</p>
+    <p>Type <strong style="color:var(--text);font-family:var(--font-mono)">Yes delete</strong> to confirm:</p>
+    <input type="text" id="purgeInput" placeholder="Yes delete" autocomplete="off" />
+    <div class="purge-actions">
+      <button class="purge-cancel-btn" id="purgeCancelBtn">Cancel</button>
+      <button class="purge-confirm-btn" id="purgeConfirmBtn" disabled>Delete everything</button>
+    </div>
+  </div>
 </div>
 
 <!-- UPLOAD MODAL -->
@@ -2859,6 +2936,49 @@ render();
 
 // refresh stats every 30s
 setInterval(fetchStats, 30000);
+
+// ── PURGE ALL ─────────────────────────────────────────────────────────────────
+const purgeOverlay  = document.getElementById('purgeOverlay');
+const purgeInput    = document.getElementById('purgeInput');
+const purgeConfirm  = document.getElementById('purgeConfirmBtn');
+const purgeCancel   = document.getElementById('purgeCancelBtn');
+
+document.getElementById('purgeBtn').addEventListener('click', () => {
+  purgeInput.value = '';
+  purgeConfirm.disabled = true;
+  purgeOverlay.classList.add('open');
+  purgeInput.focus();
+});
+
+purgeInput.addEventListener('input', () => {
+  purgeConfirm.disabled = purgeInput.value.trim() !== 'Yes delete';
+});
+
+purgeCancel.addEventListener('click', () => {
+  purgeOverlay.classList.remove('open');
+});
+
+purgeOverlay.addEventListener('click', (e) => {
+  if (e.target === purgeOverlay) purgeOverlay.classList.remove('open');
+});
+
+purgeConfirm.addEventListener('click', async () => {
+  if (purgeInput.value.trim() !== 'Yes delete') return;
+  purgeConfirm.disabled = true;
+  purgeConfirm.textContent = 'Purging…';
+  try {
+    const res = await fetch(`${API}/api/media`, { method: 'DELETE' });
+    const data = await res.json();
+    purgeOverlay.classList.remove('open');
+    fetchStats();
+    fetchMedia();
+    alert(`Purged ${data.deleted} records.`);
+  } catch (err) {
+    alert('Purge failed: ' + err.message);
+    purgeConfirm.disabled = false;
+    purgeConfirm.textContent = 'Delete everything';
+  }
+});
 </script>
 </body>
 </html>

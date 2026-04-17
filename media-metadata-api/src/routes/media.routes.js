@@ -141,6 +141,24 @@ router.get('/', validate(listQuerySchema, 'query'), controller.list);
 
 /**
  * @openapi
+ * /api/media:
+ *   delete:
+ *     tags: [Media]
+ *     summary: Delete ALL media records and their files on disk
+ *     responses:
+ *       200:
+ *         description: Deletion count
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 deleted: { type: integer }
+ */
+router.delete('/', controller.removeAll);
+
+/**
+ * @openapi
  * /api/media/{id}:
  *   get:
  *     tags: [Media]

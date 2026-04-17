@@ -3,7 +3,20 @@
     "allow": [
       "Read(//e/starcast/**)",
       "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && cat \"{}\"')",
-      "Bash(find E:\\\\starcast\\\\agents *)"
+      "Bash(find E:\\\\starcast\\\\agents *)",
+      "Bash(git -C E:/metashelf status)",
+      "Bash(git -C E:/metashelf log --oneline -3)",
+      "Bash(git -C E:/metashelf diff --stat HEAD -- media-metadata-api/src/ media-metadata-api/public/)",
+      "Bash(git -C E:/metashelf ls-files media-metadata-api/src/)",
+      "Bash(git -C E:/metashelf ls-files media-metadata-api/public/)",
+      "Bash(git -C E:/metashelf diff HEAD media-metadata-api/src/validators/media.validators.js)",
+      "Bash(git -C E:/metashelf show HEAD:media-metadata-api/src/validators/media.validators.js)",
+      "Bash(git -C E:/metashelf log --oneline -10)",
+      "Bash(git -C E:/metashelf show HEAD:media-metadata-api/src/repositories/media.repository.js)",
+      "Bash(git -C E:/metashelf status --short)",
+      "Bash(git -C E:/metashelf log origin/main..HEAD --oneline)",
+      "Bash(git -C E:/metashelf show HEAD:media-metadata-api/public/starcast-media-browser.html)",
+      "Bash(git *)"
     ]
   }
 }

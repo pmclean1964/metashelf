@@ -167,6 +167,27 @@ async function deleteMedia(id) {
   return { deleted: true, id };
 }
 
+// ── Delete all ────────────────────────────────────────────────────────────────
+
+async function deleteAllMedia() {
+  const { records } = await repo.findMany({ where: {}, orderBy: { createdAt: 'desc' }, skip: 0, take: 100000 });
+
+  let deleted = 0;
+  for (const record of records) {
+    const absolutePath = path.join(config.storage.uploadDir, record.storedFilename);
+    try {
+      if (fs.existsSync(absolutePath)) fs.unlinkSync(absolutePath);
+    } catch (err) {
+      logger.warn(`Could not delete file: ${absolutePath}`, { error: err.message });
+    }
+    await repo.remove(record.id);
+    deleted++;
+  }
+
+  logger.info(`deleteAllMedia: purged ${deleted} records`);
+  return { deleted };
+}
+
 module.exports = {
   createMedia,
   listMedia,
@@ -174,4 +195,5 @@ module.exports = {
   getMediaFilePath,
   updateMedia,
   deleteMedia,
+  deleteAllMedia,
 };

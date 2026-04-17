@@ -281,240 +281,186 @@
     color: var(--text);
   }
 
-  /* ── FAMILY FILTERS ── */
-  .family-row {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-  }
-
-  .family-chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.3rem 0.7rem;
-    font-size: 0.68rem;
-    font-family: var(--font-mono);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.05em;
-  }
-
-  .family-chip:hover { color: var(--text); border-color: var(--border2); }
-  .family-chip.active { color: white; border-color: currentColor; }
-  .family-chip[data-family="folk-country"].active    { color: var(--gold); }
-  .family-chip[data-family="rnb-soul"].active        { color: var(--accent2); }
-  .family-chip[data-family="jazz"].active            { color: #c4a35a; }
-  .family-chip[data-family="hiphop"].active          { color: var(--green); }
-  .family-chip[data-family="electronic-dance"].active{ color: var(--blue); }
-  .family-chip[data-family="electronic-hard"].active { color: var(--accent); }
-  .family-chip[data-family="electronic-soft"].active { color: var(--purple); }
-  .family-chip[data-family="experimental"].active    { color: #ff6ec7; }
-  .family-chip[data-family="rock-indie"].active      { color: #ff8c42; }
-  .family-chip[data-family="world"].active           { color: #50e3c2; }
-  .family-chip[data-family="orchestral"].active      { color: #e8d5a3; }
-  .family-chip[data-family="industrial"].active      { color: #a0a0a0; }
-  .family-chip[data-family="advertisement"].active   { color: #ff4eb8; }
-  .family-chip[data-family="news-segment"].active    { color: #00c9ff; }
-  .family-chip[data-family="space_weather"].active   { color: #a78bfa; }
-
   /* ── GRID ── */
   .grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
   }
 
   /* ── CARD ── */
   .card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
     overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
+    transition: background 0.12s, border-color 0.12s;
     cursor: pointer;
-    animation: fadeUp 0.3s ease both;
+    animation: fadeUp 0.25s ease both;
   }
 
-  .card:hover {
-    border-color: var(--border2);
-    transform: translateY(-2px);
-  }
+  .card:hover { background: var(--surface2); border-color: var(--border2); }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── CARD — ART HEADER ── */
+  /* ── CARD IMAGE ── */
   .card-art {
     width: 100%;
-    aspect-ratio: 16/7;
+    height: 120px;
     object-fit: cover;
     display: block;
     background: var(--surface2);
+    border-bottom: 0.5px solid var(--border);
   }
 
   .card-art-placeholder {
     width: 100%;
-    aspect-ratio: 16/7;
+    height: 120px;
     background: var(--surface2);
+    border-bottom: 0.5px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: var(--border2);
   }
 
   /* ── CARD BODY ── */
-  .card-body { padding: 1rem 1.1rem; }
+  .card-body { padding: 9px 10px 10px; }
 
-  .card-type-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.6rem;
-  }
-
+  /* ── TYPE BADGE ── */
   .type-badge {
-    font-size: 0.6rem;
+    font-size: 9px;
     font-family: var(--font-mono);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    border: 1px solid;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 0.5px solid;
   }
 
-  .type-badge.audio   { color: var(--blue);   border-color: var(--blue);   background: rgba(61,142,240,0.08); }
-  .type-badge.image   { color: var(--purple);  border-color: var(--purple); background: rgba(155,109,255,0.08); }
-  .type-badge.vocal   { color: var(--green);   border-color: var(--green);  background: rgba(45,204,133,0.08); }
-  .type-badge.instr   { color: var(--gold);    border-color: var(--gold);   background: rgba(240,192,61,0.08); }
+  .type-badge.audio { color: var(--blue);   border-color: var(--blue);   background: rgba(61,142,240,0.08); }
+  .type-badge.image { color: var(--purple); border-color: var(--purple); background: rgba(155,109,255,0.08); }
+  .type-badge.vocal { color: var(--green);  border-color: var(--green);  background: rgba(45,204,133,0.08); }
+  .type-badge.instr { color: var(--gold);   border-color: var(--gold);   background: rgba(240,192,61,0.08); }
+  .type-badge.json  { color: var(--accent2);border-color: var(--accent2);background: rgba(255,124,62,0.08); }
 
-  .card-duration {
-    font-size: 0.7rem;
-    font-family: var(--font-mono);
-    color: var(--muted);
-  }
-
+  /* ── CARD TITLE ── */
   .card-title {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 600;
     line-height: 1.3;
-    margin-bottom: 0.2rem;
     color: var(--text);
+    margin: 5px 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .card-artist {
-    font-size: 0.78rem;
+  /* ── CONCEPT TEXT ── */
+  .card-concept {
+    font-size: 10px;
+    line-height: 1.4;
     color: var(--muted);
     font-family: var(--font-mono);
-    margin-bottom: 0.8rem;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  /* ── FAMILY BADGE ── */
-  .family-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.65rem;
-    font-family: var(--font-mono);
+  /* ── KV METADATA ROWS ── */
+  .card-kv {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2px 0;
+    gap: 8px;
+    font-size: 10px;
+  }
+
+  .card-kk {
+    color: var(--muted);
+    flex-shrink: 0;
+    font-size: 9px;
     letter-spacing: 0.05em;
-    margin-bottom: 0.8rem;
-    color: var(--muted);
+    text-transform: uppercase;
+    font-family: var(--font-mono);
   }
 
-  .family-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
+  .card-kv2 {
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    max-width: 150px;
   }
 
   /* ── TAG STRIP ── */
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-bottom: 0.8rem;
+    gap: 3px;
+    margin: 5px 0;
   }
 
   .tag {
-    font-size: 0.62rem;
+    font-size: 9px;
     font-family: var(--font-mono);
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.15rem 0.45rem;
+    border: 0.5px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
     color: var(--muted);
-    transition: all 0.15s;
+    transition: all 0.12s;
     cursor: pointer;
   }
 
   .tag:hover { border-color: var(--border2); color: var(--text); }
   .tag.highlight { border-color: var(--accent); color: var(--accent); }
 
-  /* ── CONCEPT TEXT ── */
-  .card-concept {
-    font-size: 0.75rem;
-    line-height: 1.6;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    margin-bottom: 0.8rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* ── CARD FOOTER ── */
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--border);
-    gap: 0.5rem;
-  }
-
-  .card-date {
-    font-size: 0.62rem;
-    font-family: var(--font-mono);
-    color: var(--muted);
-  }
-
+  /* ── CARD ACTIONS ── */
   .card-actions {
     display: flex;
-    gap: 0.4rem;
+    gap: 4px;
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 0.5px solid var(--border);
+    flex-wrap: wrap;
   }
 
   .action-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.65rem;
+    background: transparent;
+    border: 0.5px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-size: 10px;
     font-family: var(--font-mono);
     color: var(--muted);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.12s;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 3px;
   }
 
-  .action-btn:hover { border-color: var(--border2); color: var(--text); }
-  .action-btn.play:hover  { border-color: var(--blue);  color: var(--blue); }
+  .action-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+  .action-btn.play:hover  { border-color: var(--blue);   color: var(--blue); }
   .action-btn.view:hover  { border-color: var(--purple); color: var(--purple); }
-  .action-btn.lyrics:hover{ border-color: var(--green); color: var(--green); }
+  .action-btn.lyrics:hover{ border-color: var(--green);  color: var(--green); }
   .action-btn.del:hover   { border-color: var(--accent); color: var(--accent); }
-  .action-btn.bad         { border-color: var(--gold); color: var(--gold); background: rgba(240,192,61,0.06); }
-  .action-btn.bad:hover   { background: rgba(240,192,61,0.15); }
-  .action-btn.bad.flagged { background: rgba(240,192,61,0.18); box-shadow: 0 0 6px rgba(240,192,61,0.3); }
+  .action-btn.bad         { border-color: var(--gold); color: var(--gold); }
+  .action-btn.bad:hover   { background: rgba(240,192,61,0.1); }
+  .action-btn.bad.flagged { background: rgba(240,192,61,0.15); box-shadow: 0 0 4px rgba(240,192,61,0.25); }
 
   /* ── BAD REPORT MODAL ── */
   .report-modal-overlay {
@@ -822,19 +768,6 @@
   .page-btn.current { background: var(--accent); border-color: var(--accent); color: white; }
   .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  /* ── FAMILY COLOR HELPERS ── */
-  .fc-folk-country     { color: var(--gold); }
-  .fc-rnb-soul         { color: var(--accent2); }
-  .fc-jazz             { color: #c4a35a; }
-  .fc-hiphop           { color: var(--green); }
-  .fc-electronic-dance { color: var(--blue); }
-  .fc-electronic-hard  { color: var(--accent); }
-  .fc-electronic-soft  { color: var(--purple); }
-  .fc-experimental     { color: #ff6ec7; }
-  .fc-rock-indie       { color: #ff8c42; }
-  .fc-world            { color: #50e3c2; }
-  .fc-orchestral       { color: #e8d5a3; }
-  .fc-industrial       { color: #a0a0a0; }
 
   /* ── UPLOAD TRIGGER BUTTON ── */
   .upload-trigger-btn {
@@ -1127,14 +1060,14 @@
   }
   .list-row {
     display: grid;
-    grid-template-columns: 32px 40px 1fr 140px 90px 80px 80px auto;
+    grid-template-columns: 32px 40px 1fr 120px 90px 80px 80px auto;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.75rem;
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 0.5px solid var(--border);
     border-radius: 8px;
-    padding: 0.55rem 0.9rem;
-    transition: border-color 0.15s, background 0.15s;
+    padding: 0.45rem 0.9rem;
+    transition: border-color 0.12s, background 0.12s;
     animation: fadeUp 0.2s ease both;
   }
   .list-row:hover { border-color: var(--border2); background: var(--surface2); }
@@ -1178,13 +1111,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .list-family {
-    font-size: 0.65rem;
+  .list-ct {
+    font-size: 9px;
     font-family: var(--font-mono);
     color: var(--muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: 0.03em;
   }
   .list-dur {
     font-size: 0.7rem;
@@ -1295,12 +1229,6 @@
     <button id="stationFilterClear" class="station-filter-clear">✕ clear</button>
   </div>
 
-  <!-- FAMILY FILTERS -->
-  <div class="family-row" id="familyFilters">
-    <span class="filter-label">Family</span>
-    <!-- populated by JS -->
-  </div>
-
   <!-- VIEW TOGGLE + BULK BAR -->
   <div class="view-toolbar">
     <div class="view-toggle">
@@ -1374,25 +1302,8 @@
               <input class="upload-input" type="text" id="upArtist" placeholder="Artist name">
             </div>
             <div class="upload-field">
-              <label class="upload-field-label">Family / Genre</label>
-              <select class="upload-input" id="upFamily">
-                <option value="">— select —</option>
-                <option value="folk-country">🪕 Folk & Country</option>
-                <option value="rnb-soul">🎵 R&B & Soul</option>
-                <option value="jazz">🎷 Jazz</option>
-                <option value="hiphop">🎤 Hip-Hop</option>
-                <option value="electronic-dance">🎛️ Electronic Dance</option>
-                <option value="electronic-hard">⚡ Electronic Hard</option>
-                <option value="electronic-soft">🌊 Electronic Soft</option>
-                <option value="experimental">🔬 Experimental</option>
-                <option value="rock-indie">🎸 Rock & Indie</option>
-                <option value="world">🌍 World</option>
-                <option value="orchestral">🎻 Orchestral</option>
-                <option value="industrial">⚙️ Industrial</option>
-                <option value="advertisement">📢 Advertisement</option>
-                <option value="news-segment">📰 News Segment</option>
-                <option value="space_weather">🌌 Space Weather</option>
-              </select>
+              <label class="upload-field-label">Genre <span style="font-weight:400;opacity:.6">(optional)</span></label>
+              <input class="upload-input" type="text" id="upFamily" placeholder="e.g. jazz, electronic, rock">
             </div>
           </div>
           <div class="upload-field-row">
@@ -1564,30 +1475,8 @@ let state = {
   sort: 'createdAt',
   sortOrder: 'desc',
   total: 0,
-  allFamilies: new Set(),
 };
 
-// ── FAMILY META ──────────────────────────────────────────
-const FAMILY_META = {
-  'folk-country':      { label: 'Folk & Country',     emoji: '🪕' },
-  'rnb-soul':          { label: 'R&B & Soul',          emoji: '🎵' },
-  'jazz':              { label: 'Jazz',                emoji: '🎷' },
-  'hiphop':            { label: 'Hip-Hop',             emoji: '🎤' },
-  'electronic-dance':  { label: 'Electronic Dance',   emoji: '🎛️' },
-  'electronic-hard':   { label: 'Electronic Hard',    emoji: '⚡' },
-  'electronic-soft':   { label: 'Electronic Soft',    emoji: '🌊' },
-  'experimental':      { label: 'Experimental',       emoji: '🔬' },
-  'rock-indie':        { label: 'Rock & Indie',        emoji: '🎸' },
-  'world':             { label: 'World',               emoji: '🌍' },
-  'orchestral':        { label: 'Orchestral',          emoji: '🎻' },
-  'industrial':        { label: 'Industrial',          emoji: '⚙️' },
-  'advertisement':     { label: 'Advertisement',       emoji: '📢' },
-  'news-segment':      { label: 'News Segment',        emoji: '📰' },
-  'space_weather':     { label: 'Space Weather',       emoji: '🌌' },
-};
-
-// Pre-seed all known families so filter chips always appear
-Object.keys(FAMILY_META).forEach(f => state.allFamilies.add(f));
 
 // ── FETCH ─────────────────────────────────────────────────
 async function fetchMedia() {
@@ -1599,7 +1488,6 @@ async function fetchMedia() {
   });
 
   if (state.search)      params.set('search', state.search);
-  if (state.family)      params.set('metadata.family', state.family);
   if (state.contentType) params.set('contentType', state.contentType);
   if (state.stationId)   params.set('stationId', state.stationId);
 
@@ -1645,15 +1533,12 @@ async function render() {
   const { data: records = [], pagination = {} } = data;
   state.total = pagination.total || 0;
 
-  // collect families for filter chips
-  records.forEach(r => {
-    const f = r.metadata?.family;
-    if (f) state.allFamilies.add(f);
+  // Exclude linked art and known art-only content types (client-side; server lacks NOT filter)
+  const visible = records.filter(r => {
+    if (r.metadata?.linked_art) return false;
+    if (ART_CONTENT_TYPES.has(r.metadata?.contentType)) return false;
+    return true;
   });
-  renderFamilyFilters();
-
-  // Filter out auto-generated linked art client-side (requires NOT filter, unsupported server-side)
-  const visible = records.filter(r => !r.metadata?.linked_art);
 
   if (!visible.length) {
     grid.innerHTML = `<div class="state-msg"><span class="big">◌</span>No records found</div>`;
@@ -1677,91 +1562,111 @@ async function render() {
 }
 
 // ── BUILD CARD ────────────────────────────────────────────
+// ── CONTENT TYPE ICONS ───────────────────────────────────
+const CT_ICONS = {
+  music_track:       '🎵',
+  ad:                '📢',
+  ad_art:            '📢',
+  station_break:     '📻',
+  news_segment:      '📰',
+  space_weather:     '🌌',
+  space_weather_art: '🌌',
+  canon:             '◈',
+  canon_art:         '◈',
+  bible_chapter:     '📖',
+  research:          '🔬',
+  research_icon:     '🔬',
+  station:           '📡',
+  track_art:         '🎨',
+};
+
+// art-only content types — excluded from main grid
+const ART_CONTENT_TYPES = new Set([
+  'track_art', 'ad_art', 'space_weather_art', 'canon_art', 'canon_image',
+]);
+
+// ── BUILD CARD ────────────────────────────────────────────
 function buildCard(r, i) {
-  const isAudio  = r.mediaType === 'AUDIO';
-  const isImage  = r.mediaType === 'IMAGE';
-  const m        = r.metadata || {};
-  const family   = m.family || '';
-  const fmeta    = FAMILY_META[family] || {};
-  const isVocal  = m.instrumental === false;
-  const isInstr  = m.instrumental === true;
-  const artId    = m.art_id;
-  const trackId  = m.track_id;
+  const isAudio = r.mediaType === 'AUDIO';
+  const isImage = r.mediaType === 'IMAGE';
+  const isJson  = r.mimeType === 'application/json';
+  const m       = r.metadata || {};
+  const ct      = m.contentType || '';
+  const artId   = m.art_id;
 
   const card = document.createElement('div');
   card.className = 'card';
-  card.style.animationDelay = `${i * 0.03}s`;
+  card.style.animationDelay = `${i * 0.02}s`;
 
-  // art image (if audio track has art_id)
-  let artHtml = '';
+  // image header
+  let artHtml;
   if (isAudio && artId) {
-    artHtml = `<img class="card-art" src="${API}/api/media/${artId}/file" alt="cover art" loading="lazy" onerror="this.style.display='none'">`;
+    artHtml = `<img class="card-art" src="${API}/api/media/${artId}/file" alt="" loading="lazy" onerror="this.style.display='none'">`;
   } else if (isImage) {
-    artHtml = `<img class="card-art" src="${API}/api/media/${r.id}/file" alt="art" loading="lazy">`;
+    artHtml = `<img class="card-art" src="${API}/api/media/${r.id}/file" alt="" loading="lazy">`;
   } else {
-    const icons = { AUDIO:'♫', IMAGE:'◻' };
-    artHtml = `<div class="card-art-placeholder">${icons[r.mediaType]||'◌'}</div>`;
+    const icon = CT_ICONS[ct] || (isJson ? '{ }' : '◌');
+    artHtml = `<div class="card-art-placeholder">${icon}</div>`;
   }
 
-  // type badges
-  const typeBadge  = `<span class="type-badge ${isAudio?'audio':'image'}">${isAudio?'AUDIO':'IMAGE'}</span>`;
-  const vocalBadge = isVocal ? `<span class="type-badge vocal">VOCAL</span>` :
-                     isInstr ? `<span class="type-badge instr">INSTRUMENTAL</span>` : '';
-  const ctBadge    = m.contentType
-    ? `<span class="type-badge" style="color:var(--muted);border-color:var(--border2)">${m.contentType}</span>`
-    : '';
+  // type badge
+  const isVocal = m.instrumental === false;
+  const isInstr = m.instrumental === true;
+  const badgeClass = isAudio ? 'audio' : isImage ? 'image' : 'json';
+  const badgeLabel = isAudio ? 'AUDIO' : isImage ? 'IMAGE' : isJson ? 'JSON' : 'FILE';
+  const vocalSuffix = isVocal ? ' · VOCAL' : isInstr ? ' · INSTR' : '';
+  const typeBadge = `<span class="type-badge ${badgeClass}">${badgeLabel}${vocalSuffix}</span>`;
 
-  // duration
-  const dur = r.durationSeconds ? formatDuration(r.durationSeconds) : '';
+  // KV metadata rows
+  const dur  = r.durationSeconds ? formatDuration(r.durationSeconds) : null;
+  const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : null;
 
-  // family badge
-  const familyBadge = family
-    ? `<div class="family-badge fc-${family}"><span class="family-dot"></span>${fmeta.label || family}</div>`
-    : '';
+  const kvRows = [
+    ['agent',   m.generatedBy],
+    ['station', m.stationId],
+    ['dur',     dur],
+    ['slug',    m.card_slug],
+    ['genre',   m.family],
+    ['created', date],
+  ].filter(([,v]) => v)
+   .map(([k,v]) => `<div class="card-kv"><span class="card-kk">${k}</span><span class="card-kv2">${v}</span></div>`)
+   .join('');
 
-  // tags
-  const tagHtml = (r.tags||[]).map(t =>
-    `<span class="tag" onclick="filterByTag('${t}')">${t}</span>`
-  ).join('');
-
-  // concept / description preview
+  // concept
   const concept = m.concept || r.description || '';
-  const conceptHtml = concept
-    ? `<div class="card-concept">${concept}</div>`
-    : '';
+  const conceptHtml = concept ? `<div class="card-concept">${concept}</div>` : '';
 
-  // date
-  const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
+  // tags (cap at 4)
+  const tagHtml = (() => {
+    const vis = (r.tags || []).slice(0, 4);
+    if (!vis.length) return '';
+    const extra = r.tags.length > 4 ? `<span class="tag">+${r.tags.length-4}</span>` : '';
+    return `<div class="tags">${vis.map(t=>`<span class="tag" onclick="filterByTag('${t}')">${t}</span>`).join('')}${extra}</div>`;
+  })();
 
-  const isJson   = r.mimeType === 'application/json';
-
-  // action buttons
+  // actions
+  const isBad     = !!m.bad_track;
   const playBtn   = isAudio ? `<button class="action-btn play" onclick="togglePlayer(event,'${r.id}')">▶ Play</button>` : '';
   const viewBtn   = isImage ? `<a class="action-btn view" href="${API}/api/media/${r.id}/file" target="_blank">↗ View</a>` : '';
   const jsonBtn   = isJson  ? `<button class="action-btn view" onclick="openModal(event,'${r.id}')">{ } JSON</button>` : '';
-  const lyricsBtn = m.lyrics ? `<button class="action-btn lyrics" onclick="openModal(event,'${r.id}')">♪ Lyrics</button>` : '';
-  const detailBtn  = `<button class="action-btn" onclick="openModal(event,'${r.id}')">≡ Detail</button>`;
-  const isBad     = !!m.bad_track;
-  const badBtn    = `<button class="action-btn bad${isBad?' flagged':''}" onclick="flagBadTrack(event,'${r.id}',this)" title="${isBad?'Unflag bad track':'Flag as bad track'}">⚑ ${isBad?'Flagged':'Bad'}</button>`;
-  const deleteBtn  = `<button class="action-btn del" onclick="deleteRecord(event,'${r.id}','${artId||''}',this)">⌫ Delete</button>`;
+  const lyricsBtn = m.lyrics ? `<button class="action-btn lyrics" onclick="openModal(event,'${r.id}')">♪</button>` : '';
+  const detailBtn = `<button class="action-btn" onclick="openModal(event,'${r.id}')">≡</button>`;
+  const badBtn    = `<button class="action-btn bad${isBad?' flagged':''}" onclick="flagBadTrack(event,'${r.id}',this)" title="${isBad?'Unflag bad track':'Flag as bad track'}">⚑</button>`;
+  const deleteBtn = `<button class="action-btn del" onclick="deleteRecord(event,'${r.id}','${artId||''}',this)">⌫</button>`;
 
   card.innerHTML = `
     ${artHtml}
     <div class="card-body">
-      <div class="card-type-row">
-        <div style="display:flex;gap:0.4rem;flex-wrap:wrap">${typeBadge}${vocalBadge}${ctBadge}</div>
-        <span class="card-duration">${dur}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+        ${typeBadge}
+        ${ct ? `<span style="font-size:9px;color:var(--muted);font-family:var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px">${ct}</span>` : ''}
       </div>
       <div class="card-title">${r.title || 'Untitled'}</div>
-      <div class="card-artist">${m.artist || r.createdBy || ''}</div>
-      ${familyBadge}
-      <div class="tags">${tagHtml}</div>
       ${conceptHtml}
+      ${kvRows}
+      ${tagHtml}
       <div id="player-${r.id}" class="card-player"></div>
-      <div class="card-footer">
-        <span class="card-date">${date}</span>
-        <div class="card-actions">${playBtn}${viewBtn}${jsonBtn}${lyricsBtn}${detailBtn}${badBtn}${deleteBtn}</div>
-      </div>
+      <div class="card-actions">${playBtn}${viewBtn}${jsonBtn}${lyricsBtn}${detailBtn}${badBtn}${deleteBtn}</div>
     </div>
   `;
 
@@ -1941,33 +1846,6 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
   }
 });
 
-// ── FAMILY FILTERS ────────────────────────────────────────
-function renderFamilyFilters() {
-  const wrap = document.getElementById('familyFilters');
-  // keep the label
-  const label = wrap.querySelector('.filter-label');
-  wrap.innerHTML = '';
-  wrap.appendChild(label);
-
-  const allChip = document.createElement('button');
-  allChip.className = 'family-chip' + (state.family === '' ? ' active' : '');
-  allChip.dataset.family = '';
-  allChip.textContent = 'All families';
-  allChip.addEventListener('click', () => { state.family = ''; state.page = 1; render(); });
-  wrap.appendChild(allChip);
-
-  state.allFamilies.forEach(f => {
-    const fmeta = FAMILY_META[f] || {};
-    const chip  = document.createElement('button');
-    chip.className = 'family-chip' + (state.family === f ? ' active' : '');
-    chip.dataset.family = f;
-    chip.textContent = `${fmeta.emoji||''} ${fmeta.label || f}`.trim();
-    chip.addEventListener('click', () => {
-      state.family = f; state.page = 1; render();
-    });
-    wrap.appendChild(chip);
-  });
-}
 
 // ── PAGINATION ────────────────────────────────────────────
 function renderPagination(pagination) {
@@ -2590,27 +2468,28 @@ document.getElementById('bulkDeleteBtn').addEventListener('click', async () => {
 function buildListRow(r, i) {
   const isAudio = r.mediaType === 'AUDIO';
   const isImage = r.mediaType === 'IMAGE';
+  const isJson  = r.mimeType === 'application/json';
   const m       = r.metadata || {};
-  const family  = m.family || '';
-  const fmeta   = FAMILY_META[family] || {};
+  const ct      = m.contentType || '';
   const artId   = m.art_id || '';
   const dur     = r.durationSeconds ? formatDuration(r.durationSeconds) : '—';
   const date    = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
 
   // thumbnail
-  let thumbHtml = '';
+  let thumbHtml;
   if (isAudio && artId) {
-    thumbHtml = `<img src="${API}/api/media/${artId}/file" alt="" loading="lazy" onerror="this.parentElement.textContent='♫'">`;
+    thumbHtml = `<img src="${API}/api/media/${artId}/file" alt="" loading="lazy" onerror="this.parentElement.textContent='${CT_ICONS[ct]||'♫'}'">`;
   } else if (isImage) {
     thumbHtml = `<img src="${API}/api/media/${r.id}/file" alt="" loading="lazy">`;
   } else {
-    thumbHtml = `♫`;
+    thumbHtml = CT_ICONS[ct] || (isJson ? '{ }' : '◌');
   }
 
+  const isBad2    = !!m.bad_track;
   const playBtn   = isAudio ? `<button class="action-btn play" onclick="togglePlayer(event,'${r.id}')">▶</button>` : '';
   const viewBtn   = isImage ? `<a class="action-btn view" href="${API}/api/media/${r.id}/file" target="_blank">↗</a>` : '';
+  const jsonBtn   = isJson  ? `<button class="action-btn view" onclick="openModal(event,'${r.id}')">{ }</button>` : '';
   const detailBtn = `<button class="action-btn" onclick="openModal(event,'${r.id}')">≡</button>`;
-  const isBad2    = !!m.bad_track;
   const badBtn2   = `<button class="action-btn bad${isBad2?' flagged':''}" onclick="flagBadTrack(event,'${r.id}',this)" title="${isBad2?'Unflag':'Flag as bad'}">⚑</button>`;
   const deleteBtn = `<button class="action-btn del" onclick="deleteRecord(event,'${r.id}','${artId}',this)">⌫</button>`;
 
@@ -2625,12 +2504,12 @@ function buildListRow(r, i) {
     <div class="list-thumb">${thumbHtml}</div>
     <div class="list-title-col">
       <div class="list-title">${r.title || 'Untitled'}</div>
-      <div class="list-artist">${m.artist || r.createdBy || ''}</div>
+      <div class="list-artist">${m.generatedBy || m.artist || r.createdBy || ''}</div>
     </div>
-    <div class="list-family">${fmeta.emoji||''} ${fmeta.label || family}</div>
+    <div class="list-ct">${ct || (isAudio?'audio':isImage?'image':'file')}</div>
     <div class="list-dur">${dur}</div>
     <div class="list-date">${date}</div>
-    <div class="list-actions">${playBtn}${viewBtn}${detailBtn}${badBtn2}${deleteBtn}</div>
+    <div class="list-actions">${playBtn}${viewBtn}${jsonBtn}${detailBtn}${badBtn2}${deleteBtn}</div>
     <div id="player-${r.id}" class="card-player" style="grid-column:1/-1;margin:0"></div>
   `;
 
@@ -2975,7 +2854,6 @@ document.getElementById('badReportBtn').addEventListener('click', async () => {
 });
 
 // ── INIT ──────────────────────────────────────────────────
-renderFamilyFilters();
 fetchStats();
 render();
 

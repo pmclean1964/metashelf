@@ -17,7 +17,11 @@
       "Bash(git -C E:/metashelf log origin/main..HEAD --oneline)",
       "Bash(git -C E:/metashelf show HEAD:media-metadata-api/public/starcast-media-browser.html)",
       "Bash(git *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(curl -s \"http://localhost:3000/api/media?contentType=ad&pageSize=1\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const r=JSON.parse\\(d\\); const item=r.data?.[0]; console.log\\(JSON.stringify\\({mediaType:item?.mediaType,mimeType:item?.mimeType,contentType:item?.metadata?.contentType,content_type:item?.metadata?.content_type},null,2\\)\\)\")",
+      "Bash(node -p \"const r=require\\('/tmp/adcheck.json'\\); const i=r.data?.[0]; JSON.stringify\\({mediaType:i?.mediaType,mimeType:i?.mimeType,ct:i?.metadata?.contentType,ct2:i?.metadata?.content_type,artId:i?.metadata?.art_id},null,2\\)\")",
+      "Bash(node *)"
     ]
   }
 }

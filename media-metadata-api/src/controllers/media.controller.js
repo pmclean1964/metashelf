@@ -68,10 +68,26 @@ async function createCoverRecord(coverBuffer, coverMime, trackTitle) {
   }
 }
 
+const EXT_MIME = {
+  '.mp3':  'audio/mpeg',  '.wav': 'audio/wav',   '.flac': 'audio/flac',
+  '.ogg':  'audio/ogg',   '.m4a': 'audio/mp4',   '.aac':  'audio/aac',
+  '.mp4':  'video/mp4',   '.mov': 'video/quicktime',
+  '.png':  'image/png',   '.jpg': 'image/jpeg',  '.jpeg': 'image/jpeg',
+  '.gif':  'image/gif',   '.webp':'image/webp',  '.svg':  'image/svg+xml',
+  '.json': 'application/json',
+};
+
 // ── POST /api/media ───────────────────────────────────────────────────────────
 async function upload(req, res) {
   if (!req.file) {
     throw new ValidationError('A file must be attached under the field name "file"');
+  }
+
+  // If the client sent no MIME type, derive it from the file extension
+  if (!req.file.mimetype || req.file.mimetype === 'application/octet-stream') {
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const guessed = EXT_MIME[ext];
+    if (guessed) req.file.mimetype = guessed;
   }
 
   // Extract ID3 tags for audio files

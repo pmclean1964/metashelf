@@ -1664,9 +1664,17 @@ const ART_CONTENT_TYPES = new Set([
 ]);
 
 // ── BUILD CARD ────────────────────────────────────────────
+const AUDIO_EXTS = new Set(['mp3','wav','flac','ogg','m4a','aac']);
+const IMAGE_EXTS = new Set(['png','jpg','jpeg','gif','webp','svg']);
+
+function fileExt(r) {
+  return ((r.storedFilename || r.originalFilename || '').split('.').pop() || '').toLowerCase();
+}
+
 function buildCard(r, i) {
-  const isAudio = r.mediaType === 'AUDIO';
-  const isImage = r.mediaType === 'IMAGE';
+  const ext     = fileExt(r);
+  const isAudio = r.mediaType === 'AUDIO' || (r.mimeType || '').startsWith('audio/') || AUDIO_EXTS.has(ext);
+  const isImage = r.mediaType === 'IMAGE' || (r.mimeType || '').startsWith('image/') || IMAGE_EXTS.has(ext);
   const isJson  = r.mimeType === 'application/json';
   const m       = r.metadata || {};
   const ct      = m.contentType || m.content_type || '';
@@ -2594,8 +2602,9 @@ document.getElementById('bulkDeleteBtn').addEventListener('click', async () => {
 
 // ── BUILD LIST ROW ────────────────────────────────────────
 function buildListRow(r, i) {
-  const isAudio = r.mediaType === 'AUDIO';
-  const isImage = r.mediaType === 'IMAGE';
+  const ext     = fileExt(r);
+  const isAudio = r.mediaType === 'AUDIO' || (r.mimeType || '').startsWith('audio/') || AUDIO_EXTS.has(ext);
+  const isImage = r.mediaType === 'IMAGE' || (r.mimeType || '').startsWith('image/') || IMAGE_EXTS.has(ext);
   const isJson  = r.mimeType === 'application/json';
   const m       = r.metadata || {};
   const ct      = m.contentType || m.content_type || '';

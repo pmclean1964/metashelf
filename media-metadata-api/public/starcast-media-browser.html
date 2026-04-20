@@ -1610,15 +1610,9 @@ async function render() {
   const { data: records = [], pagination = {} } = data;
   state.total = pagination.total || 0;
 
-  // Exclude linked art and known art-only content types (client-side; server lacks NOT filter)
-  const visible = records.filter(r => {
-    if (r.metadata?.linked_art) return false;
-    const _rct = r.metadata?.contentType || r.metadata?.content_type || '';
-    if (ART_CONTENT_TYPES.has(_rct)) return false;
-    return true;
-  });
+  const groups = groupRecords(records);
 
-  if (!visible.length) {
+  if (!groups.length) {
     grid.innerHTML = `<div class="state-msg"><span class="big">◌</span>No records found</div>`;
     renderPagination(pagination);
     return;
@@ -1630,13 +1624,61 @@ async function render() {
   grid.innerHTML = '';
   if (viewMode === 'list') {
     grid.classList.add('list-view');
-    visible.forEach((r, i) => grid.appendChild(buildListRow(r, i)));
+    groups.forEach(({ primary, artImageId }, i) => grid.appendChild(buildListRow(primary, i, artImageId)));
   } else {
     grid.classList.remove('list-view');
-    visible.forEach((r, i) => grid.appendChild(buildCard(r, i)));
+    groups.forEach(({ primary, artImageId }, i) => grid.appendChild(buildCard(primary, i, artImageId)));
   }
 
   renderPagination(pagination);
+}
+
+// ── GROUP RELATED RECORDS ────────────────────────────────
+function groupRecords(records) {
+  const consumed = new Set();
+  const results  = [];
+
+  // index images by id
+  const imageById = {};
+  records.forEach(r => { if (r.mediaType === 'IMAGE') imageById[r.id] = r; });
+
+  // group by ad_id (or other shared key)
+  const byAdId = {};
+  records.forEach(r => {
+    const key = r.metadata?.ad_id;
+    if (key) (byAdId[key] = byAdId[key] || []).push(r);
+  });
+  Object.values(byAdId).forEach(grp => {
+    if (grp.length < 2) return;
+    const audio  = grp.find(r => r.mediaType === 'AUDIO');
+    const image  = grp.find(r => r.mediaType === 'IMAGE');
+    const primary = audio || image || grp[0];
+    results.push({ primary, artImageId: image?.id || primary.metadata?.art_id || null });
+    grp.forEach(r => consumed.add(r.id));
+  });
+
+  // pair audio → image by art_id
+  records.forEach(r => {
+    if (consumed.has(r.id)) return;
+    const artId = r.metadata?.art_id;
+    if (artId && imageById[artId] && !consumed.has(artId)) {
+      results.push({ primary: r, artImageId: artId });
+      consumed.add(r.id);
+      consumed.add(artId);
+    }
+  });
+
+  // remaining singles — skip art-only images that are linked to something consumed
+  records.forEach(r => {
+    if (consumed.has(r.id)) return;
+    if (r.metadata?.linked_art) return;
+    const ct = r.metadata?.contentType || r.metadata?.content_type || '';
+    if (ART_CONTENT_TYPES.has(ct)) return;
+    results.push({ primary: r, artImageId: r.mediaType === 'IMAGE' ? null : (r.metadata?.art_id || null) });
+    consumed.add(r.id);
+  });
+
+  return results;
 }
 
 // ── BUILD CARD ────────────────────────────────────────────
@@ -1671,14 +1713,14 @@ function fileExt(r) {
   return ((r.storedFilename || r.originalFilename || '').split('.').pop() || '').toLowerCase();
 }
 
-function buildCard(r, i) {
+function buildCard(r, i, artImageId = null) {
   const ext     = fileExt(r);
   const isAudio = r.mediaType === 'AUDIO' || (r.mimeType || '').startsWith('audio/') || AUDIO_EXTS.has(ext);
   const isImage = r.mediaType === 'IMAGE' || (r.mimeType || '').startsWith('image/') || IMAGE_EXTS.has(ext);
   const isJson  = r.mimeType === 'application/json';
   const m       = r.metadata || {};
   const ct      = m.contentType || m.content_type || '';
-  const artId   = m.art_id;
+  const artId   = artImageId || m.art_id;
   const agent   = m.generatedBy  || m.generated_by  || null;
   const station = m.stationId    || m.station_id     || null;
 
@@ -2601,14 +2643,14 @@ document.getElementById('bulkDeleteBtn').addEventListener('click', async () => {
 });
 
 // ── BUILD LIST ROW ────────────────────────────────────────
-function buildListRow(r, i) {
+function buildListRow(r, i, artImageId = null) {
   const ext     = fileExt(r);
   const isAudio = r.mediaType === 'AUDIO' || (r.mimeType || '').startsWith('audio/') || AUDIO_EXTS.has(ext);
   const isImage = r.mediaType === 'IMAGE' || (r.mimeType || '').startsWith('image/') || IMAGE_EXTS.has(ext);
   const isJson  = r.mimeType === 'application/json';
   const m       = r.metadata || {};
   const ct      = m.contentType || m.content_type || '';
-  const artId   = m.art_id || '';
+  const artId   = artImageId || m.art_id || '';
   const dur     = r.durationSeconds ? formatDuration(r.durationSeconds) : '—';
   const date    = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
 

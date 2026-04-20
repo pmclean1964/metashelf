@@ -5,15 +5,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: media_user
-      POSTGRES_PASSWORD: media_pass
-      POSTGRES_DB: media_db
+      POSTGRES_USER: ${POSTGRES_USER:-media_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-media_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-media_db}
     ports:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U media_user -d media_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-media_user} -d ${POSTGRES_DB:-media_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,10 +26,12 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://media_user:media_pass@db:5432/media_db
+      PORT: ${PORT:-3000}
+      API_URL: ${API_URL:-http://localhost:3000}
+      COMFY_URL: ${COMFY_URL:-http://localhost:8000}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-media_user}:${POSTGRES_PASSWORD:-media_pass}@db:5432/${POSTGRES_DB:-media_db}
       UPLOAD_DIR: /app/uploads
-      LOG_LEVEL: info
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
       - "3000:3000"
     volumes:

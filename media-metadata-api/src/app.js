@@ -16,6 +16,7 @@ const healthRoutes = require('./routes/health.routes');
 const swaggerSpec = require('./config/swagger');
 const { errorHandler } = require('./middleware/errorHandler');
 const logger = require('./config/logger');
+const config = require('./config');
 
 const swaggerOptions = {
   explorer: true,
@@ -124,6 +125,11 @@ function createApp() {
   app.use('/logo.png', express.static(path.join(__dirname, '../uploads/logo.png')));
   //app.use('/browser', express.static(path.join(__dirname, '../uploads')));
   //app.get('/browser', (req, res) => res.sendFile(path.join(__dirname, '../uploads/starcast-media-browser.html')));
+
+  // ── Client config (lets the browser HTML read server-side env vars) ────────
+  app.get('/client-config', (req, res) => {
+    res.json({ apiUrl: config.apiUrl, comfyUrl: config.comfyUrl });
+  });
 
   // ── Routes ─────────────────────────────────────────────────────────────────
   app.use('/health', healthRoutes);

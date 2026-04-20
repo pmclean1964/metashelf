@@ -1535,8 +1535,8 @@
 </div>
 
 <script>
-const API = 'http://192.168.68.138:3000';
-const COMFY_URL = 'http://192.168.68.126:8000';
+let API = '';
+let COMFY_URL = '';
 let PAGE_SIZE = 20;
 
 let viewMode = 'grid'; // 'grid' | 'list'
@@ -2991,8 +2991,17 @@ document.getElementById('badReportBtn').addEventListener('click', async () => {
 });
 
 // ── INIT ──────────────────────────────────────────────────
-fetchStats();
-render();
+(async () => {
+  try {
+    const cfg = await fetch('/client-config').then(r => r.json());
+    API = cfg.apiUrl;
+    COMFY_URL = cfg.comfyUrl;
+  } catch(e) {
+    API = window.location.origin;
+  }
+  fetchStats();
+  render();
+})();
 
 // refresh stats every 30s
 setInterval(fetchStats, 30000);

@@ -9,9 +9,14 @@ function requireEnv(name) {
   return val;
 }
 
+const port = parseInt(process.env.PORT || '3000', 10);
+
 const config = {
   env: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '3000', 10),
+  port,
+
+  apiUrl: process.env.API_URL || `http://localhost:${port}`,
+  comfyUrl: process.env.COMFY_URL || 'http://localhost:8000',
 
   db: {
     url: process.env.DATABASE_URL || 'postgresql://media_user:media_pass@localhost:5432/media_db',

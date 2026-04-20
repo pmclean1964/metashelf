@@ -18,7 +18,7 @@ async function start() {
       logger.info(`media-metadata-api running`, {
         port: config.port,
         env: config.env,
-        docs: `http://localhost:${config.port}/doc`,
+        docs: `${config.apiUrl}/doc`,
       });
     });
 

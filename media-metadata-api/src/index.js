@@ -1,6 +1,8 @@
 // src/index.js
 'use strict';
 
+require('dotenv').config();
+
 const { createApp } = require('./app');
 const config = require('./config');
 const logger = require('./config/logger');

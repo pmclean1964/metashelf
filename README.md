@@ -4,7 +4,7 @@ A production-minded Node.js/Express REST API for uploading, managing, and stream
 
 ---
 
-## Architectureaaaaa
+## Architecture
 
 ```
 src/
